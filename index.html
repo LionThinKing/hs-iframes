@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Hubsync Iframes</title>
+    <style>
+      .custom-checkbox {
+        position: relative;
+        width: 15px;
+        height: 15px;
+        display: inline-block;
+        border-radius: 2px;
+        margin-right: 8px;
+      }
+
+      .custom-checkbox input[type="checkbox"] {
+        visibility: hidden;
+      }
+
+      .custom-checkbox label {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 15px;
+        height: 15px;
+        background-color: black;
+        cursor: pointer;
+        border-radius: 2px;
+      }
+
+      .custom-checkbox label::after {
+        content: "";
+        position: absolute;
+        width: 4px;
+        height: 8px;
+        border: solid white;
+        border-width: 0 2px 2px 0;
+        top: 2.3px;
+        left: 4.3px;
+        transform: rotate(45deg);
+        display: none;
+      }
+
+      .custom-checkbox input[type="checkbox"]:checked + label::after {
+        display: block;
+      }
+
+      #progressBar {
+        transition: width 0.3s ease;
+      }
+
+      .container {
+        font-family: Arial, sans-serif;
+        padding: 1rem;
+      }
+
+      .due-date {
+        font-size: 12px;
+        color: #666;
+      }
+
+      .total-tasks {
+        font-weight: 500;
+        margin-bottom: 10px;
+        font-size: 12px;
+        color: #666;
+      }
+
+      .progress-bar-container {
+        background-color: #e0e0e0;
+        border-radius: 5px;
+        height: 20px;
+        width: 100%;
+        margin-top: 5px;
+      }
+
+      .progress-bar {
+        background-color: green;
+        border-radius: 5px;
+        height: 20px;
+        width: 83.33%;
+      }
+
+      .task-count {
+        margin-top: 5px;
+      }
+
+      .tabs {
+        display: flex;
+        justify-content: flex-start;
+        margin-bottom: 20px;
+      }
+
+      .tab {
+        padding: 10px 20px;
+        cursor: pointer;
+        font-size: 14px;
+      }
+
+      .tab:hover {
+        border-bottom: 3px solid #333;
+      }
+
+      .tab.active {
+        border-bottom: 3px solid #333;
+      }
+
+      .task-list {
+        font-size: 14px;
+      }
+
+      .task {
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <p class="due-date">Due today Apr 12, 2023</p>
+
+      <!-- Total Tasks -->
+      <div class="total-tasks">
+        Total tasks
+        <div class="progress-bar-container">
+          <div id="progressBar" class="progress-bar"></div>
+        </div>
+        <div class="task-count" id="taskCount">5/6</div>
+      </div>
+
+      <!-- Tabs -->
+      <!-- <div class="tabs">
+        <div class="tab active">Assigned</div>
+      </div> -->
+      <br />
+
+      <!-- Tasks List -->
+      <div class="task-list" id="taskList">
+        <!-- Tasks will be added here dynamically -->
+      </div>
+    </div>
+
+    <script>
+      const tasks = [
+        { id: 1, title: "Vendor X Onboarding Questionnaire", completed: true },
+        { id: 2, title: "Vendor X Payment Details", completed: true },
+        { id: 3, title: "Vendor Y Form W-8IMY", completed: true },
+        { id: 4, title: "Vendor Y Payment Detail", completed: true },
+        { id: 5, title: "Q4 Excise Tax Support", completed: false },
+        { id: 6, title: "Vendor X Form W-8BEN-E", completed: true },
+      ];
+
+      function renderTasks() {
+        const taskListElement = document.getElementById("taskList");
+        taskListElement.innerHTML = ""; // Clear existing tasks
+
+        tasks.forEach((task) => {
+          const taskElement = document.createElement("div");
+          taskElement.className = "task";
+
+          taskElement.innerHTML = `
+          <div class="custom-checkbox">
+            <input type="checkbox" id="check${task.id}" ${
+            task.completed ? "checked" : ""
+          } onclick="updateProgress()" />
+            <label for="check${task.id}"></label>
+          </div>
+          ${task.title}
+        `;
+
+          taskListElement.appendChild(taskElement);
+        });
+      }
+
+      function updateProgress() {
+        var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        var checkedCount = 0;
+        checkboxes.forEach(function (checkbox) {
+          if (checkbox.checked) {
+            checkedCount++;
+          }
+        });
+        var totalTasks = checkboxes.length;
+        var newWidth = (checkedCount / totalTasks) * 100;
+        document.getElementById("progressBar").style.width = newWidth + "%";
+        document.querySelector("#taskCount").innerText =
+          checkedCount + "/" + totalTasks;
+      }
+
+      // Initial render of tasks
+      renderTasks();
+      updateProgress();
+    </script>
+  </body>
+</html>
